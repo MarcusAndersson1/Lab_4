@@ -244,7 +244,7 @@ Here is pseudocode of the simplest version of the UCS algorithm:
 
 It is important that we return as soon as we reach the goal, because otherwise we will continue adding new entries to the queue infinitely. 
 
-Implement this algorithm in the `searchUCS` method. There is a variable `nodesVisited` already defined, which you should increase every time you remove an entry from `pqueue`. When you have done this you should be able to run some simple queries, such as finding the shortest route to Kungälv, Lerum, or Alingsås:
+Implement this algorithm in the `searchUCS` method. There is a variable `iterations` already defined, which you should increase every time you remove an entry from `pqueue`. When you have done this you should be able to run some simple queries, such as finding the shortest route to Kungälv, Lerum, or Alingsås:
 
 ```
 $ java RunPathFinder ucs AdjacencyGraph graphs/AdjacencyGraph/citygraph-VGregion.txt Göteborg Alingsås
