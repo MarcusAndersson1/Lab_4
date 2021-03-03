@@ -1,4 +1,5 @@
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Set;
@@ -74,7 +75,21 @@ public class WordLadder implements DirectedGraph<String> {
          * TODO: Task 2               *
          * Change below this comment  *
          ******************************/
-        return new LinkedList<>();
+        List<DirectedEdge<String>> edges =  new LinkedList<>();
+        StringBuilder s = new StringBuilder(w);
+        char[] word = w.toCharArray();
+        for(int i = 0 ; i<word.length; i++){
+            for(char l : charset ){
+                if(word[i] != l){
+                    s.setCharAt(i,l);
+                    if(dictionary.contains(s.toString())){
+                        edges.add(new DirectedEdge<String>(edges.get(edges.size()).from(),s.toString()));
+                    }
+               }
+            }
+        }
+
+        return edges;
     }
 
     /**

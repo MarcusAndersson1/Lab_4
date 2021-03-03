@@ -1,12 +1,7 @@
 
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.PriorityQueue;
-import java.util.Random;
+import java.util.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Comparator;
 
 import java.util.stream.Collectors;
 import java.util.function.Function;
@@ -86,10 +81,27 @@ public class PathFinder<Node> {
     public Result searchUCS(Node start, Node goal) {
         int iterations = 0;
         Queue<PQEntry> pqueue = new PriorityQueue<>(Comparator.comparingDouble(entry -> entry.costToHere));
+        Set<Node> visitedNodes = new HashSet<>();
         /******************************
          * TODO: Task 1a+c            *
          * Change below this comment  *
          ******************************/
+        pqueue.add(new PQEntry(start, 0 , null));
+        while (!pqueue.isEmpty()){
+            iterations++;
+            PQEntry entry = pqueue.remove();
+            if(!visitedNodes.contains(entry.node)){
+            if(entry.node.equals(goal)){
+                return new Result(true, start, goal, entry.costToHere, extractPath(entry), iterations);
+            }
+            for(DirectedEdge<Node> edge: graph.outgoingEdges(entry.node)){
+                    visitedNodes.add(edge.from());
+                    double costToNext = entry.costToHere + edge.weight();
+                    pqueue.add(new PQEntry(edge.to(), costToNext, entry));
+                }
+            visitedNodes.add(entry.node);
+            }
+        }
         return new Result(false, start, goal, -1, null, iterations);
     }
     
@@ -118,7 +130,15 @@ public class PathFinder<Node> {
          * TODO: Task 1b              *
          * Change below this comment  *
          ******************************/
-        path.add(entry.node);
+        Stack<PQEntry> s = new Stack();
+        s.push(entry);
+        while(entry.backPointer!=null) {
+            s.push(entry.backPointer);
+            entry = entry.backPointer;
+        }
+        while (!s.isEmpty()){
+            path.add(s.pop().node);
+        }
         return path;
     }
 
