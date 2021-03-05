@@ -162,7 +162,6 @@ public class GridGraph implements DirectedGraph<GridGraph.Coord> {
         }
         return buffer.toString();
     }
-
     /**
      * @return a string representation of this graph, 
      * including some random coordinates and edges

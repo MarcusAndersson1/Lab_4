@@ -104,10 +104,8 @@ public class WordLadder implements DirectedGraph<String> {
      */
     public double guessCost(String w, String u) {
         int diff = 0;
-        char[] from = w.toCharArray();
-        char[] to = u.toCharArray();
-        for(int i = 0;  i< from.length; i++){
-            if(from[i] !=  to[i]){
+        for(int i = 0;  i< w.length(); i++){
+            if(w.charAt(i) != u.charAt(i)){
                 diff++;
             }
         }
