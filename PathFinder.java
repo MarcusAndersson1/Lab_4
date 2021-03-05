@@ -115,18 +115,50 @@ public class PathFinder<Node> {
         int iterations = 0;
         Queue<PQEntry> pqueue = new PriorityQueue<>(Comparator.comparingDouble(entry -> entry.costToHere));
         Set<Node> visitedNodes = new HashSet<>();
+
+        Map<Node,Node> cameFrom = new HashMap();
+
         pqueue.add(new PQEntry(start, 0 , null));
+
+        Map<Node, Double> gScore =  new HashMap<>();
+        gScore.put(start, 0.0);
+
+        Map<Node, Double> fScore =  new HashMap<>();
+        fScore.put(start, graph.guessCost(start, goal));
+
+
         while (!pqueue.isEmpty()){
             iterations++;
-            PQEntry entry = pqueue.remove();
-            if(!visitedNodes.contains(entry.node)){
-                if(entry.node.equals(goal)){
-                    return new Result(true, start, goal, entry.costToHere, extractPath(entry), iterations);
-                }
+            PQEntry entry = pqueue.peek();
+
+            if(entry.node.equals(goal)){
+                return new Result(true, start, goal, entry.costToHere, extractPath(entry), iterations);
+            }
+
+            pqueue.remove();
+
+           if(!visitedNodes.contains(entry.node)){
                 for(DirectedEdge<Node> edge: graph.outgoingEdges(entry.node)){
                     visitedNodes.add(edge.from());
+                    gScore.put(edge.to(), entry.costToHere);
+                   double tentativeGScore = gScore.get(entry.node) + edge.weight();
+                //   System.out.print(tentativeGScore + " + ");
+                 //   System.out.print(gScore.get(edge.to()));
+                //    System.out.println();
                     double costToNext = entry.costToHere + edge.weight();
-                    pqueue.add(new PQEntry(edge.to(), costToNext, entry));
+                  if(tentativeGScore < gScore.get(edge.to())) {
+                      cameFrom.put(edge.to(), entry.node);
+                      System.out.println("hej");
+                      gScore.put(edge.to(), tentativeGScore);
+                      fScore.put(edge.to(), gScore.get(edge.to()) + graph.guessCost(entry.node, edge.to()));
+                      if (!visitedNodes.contains(edge.to())){
+                          visitedNodes.add(edge.to());
+                          pqueue.add(new PQEntry(edge.to(), costToNext, entry));
+                      }
+                  }else {
+                      pqueue.add(new PQEntry(edge.to(), costToNext, entry));
+                  }
+
                 }
                 visitedNodes.add(entry.node);
             }
