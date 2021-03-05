@@ -95,6 +95,7 @@ public class PathFinder<Node> {
                 return new Result(true, start, goal, entry.costToHere, extractPath(entry), iterations);
             }
             for(DirectedEdge<Node> edge: graph.outgoingEdges(entry.node)){
+
                     visitedNodes.add(edge.from());
                     double costToNext = entry.costToHere + edge.weight();
                     pqueue.add(new PQEntry(edge.to(), costToNext, entry));
@@ -112,10 +113,24 @@ public class PathFinder<Node> {
      */
     public Result searchAstar(Node start, Node goal) {
         int iterations = 0;
-        /******************************
-         * TODO: Task 3               *
-         * Change below this comment  *
-         ******************************/
+        Queue<PQEntry> pqueue = new PriorityQueue<>(Comparator.comparingDouble(entry -> entry.costToHere));
+        Set<Node> visitedNodes = new HashSet<>();
+        pqueue.add(new PQEntry(start, 0 , null));
+        while (!pqueue.isEmpty()){
+            iterations++;
+            PQEntry entry = pqueue.remove();
+            if(!visitedNodes.contains(entry.node)){
+                if(entry.node.equals(goal)){
+                    return new Result(true, start, goal, entry.costToHere, extractPath(entry), iterations);
+                }
+                for(DirectedEdge<Node> edge: graph.outgoingEdges(entry.node)){
+                    visitedNodes.add(edge.from());
+                    double costToNext = entry.costToHere + edge.weight();
+                    pqueue.add(new PQEntry(edge.to(), costToNext, entry));
+                }
+                visitedNodes.add(entry.node);
+            }
+        }
         return new Result(false, start, goal, -1, null, iterations);
     }
 

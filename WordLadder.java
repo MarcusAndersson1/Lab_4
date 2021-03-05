@@ -1,9 +1,6 @@
 
 import java.nio.charset.Charset;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 
 import java.util.stream.Collectors;
 
@@ -76,43 +73,26 @@ public class WordLadder implements DirectedGraph<String> {
          * Change below this comment  *
          ******************************/
         addWord(w);
+        Stack<String> s = new Stack();
         List<DirectedEdge<String>> outgoingEdgeList = new LinkedList<>();
-
         char [] word = w.toCharArray();
             for(int i = 0; i<word.length; i++){
                 char originalChar = word[i];
-
-                for (char c : charset){
-                    if(word[i] != c) {
+                for (char c : charset) {
+                    if (word[i] != c) {
                         word[i] = c;
+                        String newString = String.valueOf(word);
+                        if (dictionary.contains(newString)) {
+                            DirectedEdge<String> edge = new DirectedEdge<>(w, newString);
+                            if(!(outgoingEdgeList.contains(edge) || newString.equals(w))){
+                                //System.out.println(edge.toString());
+                                outgoingEdgeList.add(edge);
+                            }
+                        }
                     }
-                    String newString = String.valueOf(word);
-
-                    if(dictionary.contains(newString)){
-                        System.out.println(newString);
-                        DirectedEdge<String> edge = new DirectedEdge<>(w,newString);
-                        outgoingEdgeList.add(edge);
-                    }
-
                 }
-               word[i] = originalChar;
+                word[i] = originalChar;
             }
-
-       /* List<DirectedEdge<String>> edges =  new LinkedList<>();
-        StringBuilder s = new StringBuilder(w);
-        char[] word = w.toCharArray();
-        for(int i = 0 ; i<word.length; i++){
-            for(char l : charset ){
-                if(word[i] != l){
-                    s.setCharAt(i,l);
-                    if(dictionary.contains(s.toString())){
-                        edges.add(new DirectedEdge<String>(edges.get(edges.size()).from(),s.toString()));
-                    }
-               }
-            }
-        }
-
-        return edges;*/
         return outgoingEdgeList;
     }
 
