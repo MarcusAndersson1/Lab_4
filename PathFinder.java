@@ -114,14 +114,9 @@ public class PathFinder<Node> {
     public Result searchAstar(Node start, Node goal) {
         int iterations = 0;
         Queue<PQEntry> pqueue = new PriorityQueue<>(Comparator.comparingDouble(entry -> entry.fScore));
-        Queue<PQEntry> minPath = new PriorityQueue<>(Comparator.comparingDouble(entry -> entry.fScore));
         Set<Node> visitedNodes = new HashSet<>();
-        /******************************
-         * TODO: Task 1a+c            *
-         * Change below this comment  *
-         ******************************/
+
         pqueue.add(new PQEntry(start, 0 , null, start, goal));
-        minPath.add(new PQEntry(start, 0 , null, start, goal));
         while (!pqueue.isEmpty()){
             iterations++;
             PQEntry entry = pqueue.remove();
@@ -129,15 +124,11 @@ public class PathFinder<Node> {
                 if(entry.node.equals(goal)){
                     return new Result(true, start, goal, entry.costToHere, extractPath(entry), iterations);
                 }
-                for(DirectedEdge<Node> edge: graph.outgoingEdges(entry.node)){
-
-                    double tentativScore = entry.costToHere + edge.weight();
-                        visitedNodes.add(edge.from());
-                        double costToNext = entry.costToHere + edge.weight();
-                        pqueue.add(new PQEntry(edge.to(), costToNext, entry, entry.node, goal));
-
+                for(DirectedEdge<Node> edge: graph.outgoingEdges(entry.node)) {
+                    double costToNext = entry.costToHere + edge.weight();
+                    visitedNodes.add(entry.node);
+                    pqueue.add(new PQEntry(edge.to(), costToNext, entry, edge.to(), goal));
                 }
-                visitedNodes.add(entry.node);
             }
         }
         return new Result(false, start, goal, -1, null, iterations);
