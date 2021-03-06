@@ -142,7 +142,6 @@ public class GridGraph implements DirectedGraph<GridGraph.Coord> {
         double v = p.x - q.x;
         double h = p.y - q.y;
         diff = Math.sqrt(Math.pow(v, 2) + Math.pow(h, 2));
-        System.out.println(diff);
         return diff;
     }
 
