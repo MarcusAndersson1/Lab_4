@@ -3,6 +3,7 @@ import java.lang.Math;
 
 import java.util.List;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Random;
 
 import java.util.stream.Collectors;
@@ -113,8 +114,8 @@ public class GridGraph implements DirectedGraph<GridGraph.Coord> {
      */
     public List<DirectedEdge<Coord>> outgoingEdges(Coord p) {
         List<DirectedEdge<Coord>> outgoing = new LinkedList<>();
-        for (int dx = -1; dx <= +1; dx++) 
-            for (int dy = -1; dy <= +1; dy++) 
+        for (int dx = -1; dx <= +1; dx++)
+            for (int dy = -1; dy <= +1; dy++)
                 if (!(dx == 0 && dy == 0) && passable(p.x+dx, p.y+dy)) {
                     Coord q = new Coord(p.x+dx, p.y+dy);
                     double w = Math.sqrt(dx*dx + dy*dy);
@@ -137,7 +138,12 @@ public class GridGraph implements DirectedGraph<GridGraph.Coord> {
      * (the Euclidean distance between the coordinates)
      */
     public double guessCost(Coord p, Coord q) {
-        return Math.abs(p.x - q.x) + Math.abs(p.y - q.y);
+        double diff = 0;
+        double v = p.x - q.x;
+        double h = p.y - q.y;
+        diff = Math.sqrt(Math.pow(v, 2) + Math.pow(h, 2));
+        System.out.println(diff);
+        return diff;
     }
 
     /**
