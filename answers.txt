@@ -4,9 +4,9 @@
 *******************************************************************************/
 
 Group members:
-- [...]
-- [...]
-- [...]
+- [Jonatan Andersson]
+- [Richard Novenius]
+- [Marcus Andersson]
 
 /******************************************************************************
 ** 1. List the minimal cost, shortest path, and number of loop iterations
@@ -15,48 +15,48 @@ Group members:
 
 > java RunPathFinder ucs AdjacencyGraph graphs/AdjacencyGraph/citygraph-SE.txt Lund Kiruna
 
-loop iterations: [...]
-minimal cost:    [...]
-shortest path:   [...]
+loop iterations: [5427]
+minimal cost:    [1826]
+shortest path:   [31]
 
 > java RunPathFinder ucs NPuzzle 3 "/HFG/BED/C_A/" "/ABC/DEF/GH_/"
 
-loop iterations: [...]
-minimal cost:    [...]
-shortest path:   [...]
+loop iterations: [483573]
+minimal cost:    [31]
+shortest path:   [31]
 
 > java RunPathFinder astar NPuzzle 3 "/HFG/BED/C_A/" "/ABC/DEF/GH_/"
 
-loop iterations: [...]
-minimal cost:    [...]
+loop iterations: [32375]
+minimal cost:    [31]
 
 > java RunPathFinder ucs NPuzzle 3 "/HGF/BED/C_A/" "/ABC/DEF/GH_/"
 
-loop iterations: [...]
-minimal cost:    [...]
-shortest path:   [...]
+loop iterations: [483841]
+minimal cost:    [No path]
+shortest path:   [No Path]
 
 > java RunPathFinder ucs GridGraph graphs/GridGraph/AR0011SR.map "23:161" "130:211"
 
-loop iterations: [...]
-minimal cost:    [...]
-shortest path:   [...]
+loop iterations: [159327]
+minimal cost:    [366.4]
+shortest path:   [308]
 
 > java RunPathFinder astar GridGraph graphs/GridGraph/AR0011SR.map "23:161" "130:211"
 
-loop iterations: [...]
-minimal cost:    [...]
+loop iterations: [95160]
+minimal cost:    [366.40]
 
 > java RunPathFinder ucs WordLadder graphs/WordLadder/words-saldo.txt syster broder
 
-loop iterations: [...]
-minimal cost:    [...]
-shortest path:   [...]
+loop iterations: [71182]
+minimal cost:    [11]
+shortest path:   [11]
 
 > java RunPathFinder astar WordLadder graphs/WordLadder/words-saldo.txt syster broder
 
-loop iterations: [...]
-minimal cost:    [...]
+loop iterations: [7055]
+minimal cost:    [11]
 
 /******************************************************************************
 ** 2. For each of the three classes GridGraph, WordLadder, and NPuzzle,
@@ -65,11 +65,11 @@ minimal cost:    [...]
 **    Try a number of different examples per class.
 ******************************************************************************/
 
-GridGraph:  [...]
+GridGraph:  [approximately 1.6 times less loops]
 
-WordLadder: [...]
+WordLadder: [approximately 10 times less loops]
 
-NPuzzle:    [...]
+NPuzzle:    [approximately 15 times less loops]
 
 /******************************************************************************
 ** 3. For which of the three classes GridGraph, WordLadder, and NPuzzle,
@@ -77,7 +77,7 @@ NPuzzle:    [...]
 **    Why do you think this is the case?
 ******************************************************************************/
 
-[...]
+[Npuzzle improved the most this is probably because due to the guess can be very precise.]
 
 /******************************************************************************
 ** 4. Give pseudo-code of the following methods that you implemented.
@@ -86,29 +86,89 @@ NPuzzle:    [...]
 ******************************************************************************/
 
 WordLadder.outgoingEdges(String w):
-    [...]
+[        addWord(w);
+         s = new Stack();
+            outgoingEdgeList = new LinkedList<>();
+             char [] word = w.toCharArray();
+                 for( all chars in the string){
+                     originalChar = word[i];
+                     for ( all chars in charset ) {
+                         if ( word at index I is not equal to char) {
+                             word[index] = c; //switch char
+                             newString = String.valueOf(word);
+                             if (dictionary contains word) {
+                                 edge = new DirectedEdge<>(w, newString);
+                                 if(newEdge is not in outgoingeEdgeEist or the newWord is not equal w ){
+                                     outgoingEdgeList.add(edge);
+                                 }
+                             }
+                         }
+                     }
+                     word[index] = originalChar; // switch bak
+                 }
+             return outgoingEdgeList;]
 
 
 WordLadder.guessCost(String w, String u):
-    [...]
+    [     public double guessCost(String w, String u) {
+              diff = 0;
+              for(all chars in w){
+                  if(char in w is not equal to char in u){
+                      diff++;
+                  }
+              }
+              return diff;
+          }]
 
 
 GridGraph.guessCost(Coord p, Coord q):
-    [...]
+    [    public double guessCost(Coord p, Coord q) {
+             double diff = 0;
+             double v = p.x - q.x; // vertical length
+             double h = p.y - q.y; //Horizontal length
+             diff = Math.sqrt(v^2 + h^2); //calculate hypotenusan
+             return diff;
+         }]
 
 /******************************************************************************
 ** 5. Give pseudo-code of the method .searchAstar() in PathFinder.
 ******************************************************************************/
 
 PathFinder.searchAstar(Node start, Node goal):
-    [...]
+    [    public Result searchAstar(Node start, Node goal) {
+             iterations = 0;
+             // added fscore to PqEntry, fScore = costToHere + graph.guessCost(fromHere,toGoal);
+             pqueue = new PriorityQueue<>(Comparator.comparingDouble(entry -> entry.fScore)); // fscore claculated from guecost
+             visitedNodes = new HashSet<>();
+             pqueue.add(new PQEntry(start, 0 , null, start, goal));
+             while (pqueue is not empty){
+                 iterations++; // count iterations
+                 entry = pqueue.remove();
+                 if(if vistedNodes not contains entry){
+                     if(entry == goal){
+                         return new Result(true, start, goal, entry.costToHere, extractPath(entry), iterations);
+                     }
+                     for(for all edges in entry) {
+                         costToNext = entry.costToHere + edge.weight();
+                         visitedNodes.add(entry.node);
+                         pqueue.add(new PQEntry(edge.to(), costToNext, entry, edge.to(), goal));
+                     }
+                 }
+             }
+             return new Result(false, start, goal, -1, null, iterations);
+         }]
 
 /******************************************************************************
 ** 6. What are the main differences between your implementations 
 **    of .searchAstar() and .searchUCS()?
 ******************************************************************************/
 
-[...]
+[
+We changed the comparator from entry.costToHere to entry.fScore
+Created an new constructor in PQentry that allowed us to create fScore in every PQentry via allowing to add edge.to and goal
+ucs :    pqueue.add(new PQEntry(edge.to(), costToNext, entry));
+A*  :    pqueue.add(new PQEntry(edge.to(), costToNext, entry, goal));
+ ]
 
 /******************************************************************************
 ** Appendix: General information
@@ -116,9 +176,9 @@ PathFinder.searchAstar(Node start, Node goal):
 ** A. Approximately how many hours did you spend on the assignment?
 ******************************************************************************/
 
-[..group member..]:  [..hours..]
-[..group member..]:  [..hours..]
-[..group member..]:  [..hours..]
+[Jonatan Andersson]:  [20h]
+[Richard Novenius]:  [18h]
+[Marcus Andersson]:  [4h]
 
 /******************************************************************************
 ** B. Are there any known bugs / limitations?
@@ -133,13 +193,14 @@ PathFinder.searchAstar(Node start, Node goal):
 **    may have used in creating your design.
 ******************************************************************************/
 
-[...]
+[no]
 
 /******************************************************************************
 ** D. Describe any serious problems you encountered.                    
 ******************************************************************************/
 
-[...]
+[The wikipedia page pseudo code were quite misleading, we assumed we were supposed to implement the pseudocode instead
+of just reading the description this added at least 6h on our work...  ]
 
 /******************************************************************************
 ** E. List any other comments here.
@@ -147,4 +208,6 @@ PathFinder.searchAstar(Node start, Node goal):
 **    from doing the assignment, and whether you enjoyed it.                                             
 ******************************************************************************/
 
-[...]
+[Some of us dont feel like they learn so much out of this and some other feel that they do. you know people are different
+ and isn't that amazing, peace! One issue is that the problems are close ended in how you are allowed to solve them so we now
+ a solution but it is not in the same way as you want, Which in one way stop the creativity process]
